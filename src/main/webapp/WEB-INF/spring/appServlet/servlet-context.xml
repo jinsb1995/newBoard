@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	
+<!--<annotation-driven>을 통해 URL매핑이 일어난다.
+	 얘 덕분에 @RequestMapping을 사용할 수 있게되고, @RequestMapping에 지정된 URL로 브라우저의 요청 URL이 매핑되게 된다.
+	 만약 <annotation-driven>을 지우면 URL을 찾을 수 없다는 오류가 발생하게 되는데 이는 즉 @RequestMapping을 사용할 수 없게 된다는 의미이다.
+	 구성 : RequestMappingHandlerMapping,  RequestMappingHandlerAdapter, ExceptionHandlerExceptionResolver-->
+	<annotation-driven />
+
+
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+<!-- *Controller에서 넘겨진 Mapping의 "/home(예)"값은 여기(servlet-context)로 전달된다.
+	 여기서는 InternalResourceViewResolver를 통해 뷰(view)를 찾게된다. 
+	 전달받은 home(예)에 앞에는  /WEB-INF/views/ 를 붙이고  뒤에는 .jsp를 붙인다. 
+	 새롭게 만들어진 뷰 이름은 DispatcherServlet로 전달된다.-->	
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	
+<!-- component-scan
+	 @Controller,    @Repository,     @Service,     @Component 어노테이션이 사용된 클래스를 자동으로 스캔하여 빈(Bean)으로 등록한다.
+	 여기서는  org.zerock.controller이 지정 되었는데, 이는 해당 패키지 아래에서 Annotation이 사용된 클래스를 찾아서 빈으로 등록하겠다는 것이다.-->
+	<context:component-scan base-package="org.zerock.controller" />
+	
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"></beans:bean>
+	
+</beans:beans>
+
+<!-- servlet-context는 브라우저의 요청으로부터 그 요청을 처리할 Controller를 이어주는 작업을 한다.
+	 HandlerMapping, HandlerAdapter의 작업이 진행된다.
+	 
+	 
+ -->

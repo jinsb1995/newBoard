@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	
+	<context:annotation-config></context:annotation-config>
+	
+	
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="driverClassName"    value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"></property>
+		<property name="jdbcUrl"  value="jdbc:log4jdbc:oracle:thin:@localhost:1521:orcl"></property>
+		<property name="username" value="bo"></property>
+		<property name="password" value="bo"></property>
+
+	</bean>
+		
+	
+<!-- HikariCP는 여러명의 사용자를 동시에 처리하기 위해 데이터베이스와 연결해 주기 위한 커넥션 풀 이다(Connection Pool) -->
+	<!-- HikariCP configuration -->
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="hikariConfig"/>
+	</bean>
+
+<!-- 내부적으로 SQLSession을 만들어 내는 존재이다. -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<tx:annotation-driven />
+	
+	
+<!-- base-package 속성은 지정된 패키지의 모든 Mybatis 관련 어노테이션을 찾아서 처리합나다.
+	 Mapper를 설정하는 작업은 XML이나 Mapper  인터페이스를 설정할 수도 있지만 매번 하2면 너무 번잡하기 때문에 자동으로 인식하는 방식이다. -->
+	<mybatis-spring:scan base-package="org.zerock.mapper"/>
+	
+	
+<!-- 의존성 주입 설정 |  context 객체(bean)을 생성
+	스프링이 시작되면 먼저 스프링이 사용하는 메모리 영역을 만들게 되는데 이를   "컨텍스트(context)" 라고 한다.-->
+	<context:component-scan base-package="org.zerock.service"></context:component-scan>
+	<context:component-scan base-package="org.zerock.aop"></context:component-scan>
+	
+	
+</beans>
+
+
+<!-- 
+	* root-context.xml 은 스프링이 로딩되면서 읽어 들이는 문서이다.
+	* 이미 만들어진 클래스들을 이용해서 스프링의 빈(Bean)으로 등록할 때 사용한다.
+
+	* 스프링은 자신이 객체를 생성하고 관리해야 하는 개체들에 대한 설정이 필요하다. 이에대한 설정이 root-context.xml 파일이다.
+	* root-context.xml에 설정되어 있는 <context : component-scan>태그의 내용을 통해서 'org.zerock.service'라는 패키지를 스캔하기 시작한다.
+	* 해당 패키지에 있는 클래스들 중에서 스프링이 사용하는 @Component라는 어노테이션이    존재하는 클래스의 인스턴스를 생성합니다.
+ -->
+ 
+ 
+ 
