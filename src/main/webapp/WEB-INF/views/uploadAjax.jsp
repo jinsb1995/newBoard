@@ -126,28 +126,24 @@ $(document).ready(function() {
 		
 		$(uploadResultArr).each(function(i, obj) {
 			
-			str += "<li>" + obj.fileName + "</li>";
-			
-		})
+			if(!obj.image) {
+				var fileCallPath = encodeURIComponent( obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
+				
+				str += "<li><a href='/download?fileName=" + fileCallPath + "'>" 
+					+  "<img src='/resources/img/attach.jpg'>" + obj.fileName + "</li>";
+			} else {
+// 	 			str += "<li>" + obj.fileName + "</li>";
+				
+				var fileCallPath = encodeURIComponent( obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName );
+				
+				str += "<li><img src='/display?fileName=" + fileCallPath + "'></li>";
+				
+			}
+		});
 		
 		uploadResult.append(str);
 	}
 	
-	function showUploadedFile(uploadResultArr) {
-		
-		var str = "";
-		
-		$(uploadResultArr).each(
-			function(i, obj) {
-				
-				if(!obj.image) {
-					str += "<li><img src='/resources/img/attach.jpg'>" + obj.fileName+ "</li>";
-				} else {
-					str += "<li>" + obj.fileName + "</li>";
-				}
-			});
-		uploadResult.append(str);
-	}
 	
 });
 </script>
